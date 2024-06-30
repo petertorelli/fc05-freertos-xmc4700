@@ -28,8 +28,8 @@
 
 #include "cycfg_dmas.h"
 
-extern void * g_rx_sbus_src_ptr;
-extern void * g_rx_sbus_raw_dst_ptr;
+extern void * g_sbus_src_ptr;
+extern void * g_sbus_raw_dst_ptr;
 
 const uint32_t SBUS_DMA_HDLR_events = 0U | XMC_DMA_CH_EVENT_BLOCK_TRANSFER_COMPLETE | 0U | 0U | 0U;
 const XMC_DMA_CH_CONFIG_t SBUS_DMA_HDLR_config = 
@@ -53,7 +53,7 @@ const XMC_DMA_CH_CONFIG_t SBUS_DMA_HDLR_config =
 
 void SBUS_DMA_HDLR_reload(void)
 {
-    XMC_DMA_CH_SetBlockSize(SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM, 25U);    XMC_DMA_CH_SetSourceAddress(SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM, (uint32_t)g_rx_sbus_src_ptr);    XMC_DMA_CH_SetDestinationAddress(SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM, (uint32_t)g_rx_sbus_raw_dst_ptr);
+    XMC_DMA_CH_SetBlockSize(SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM, 25U);    XMC_DMA_CH_SetSourceAddress(SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM, (uint32_t)g_sbus_src_ptr);    XMC_DMA_CH_SetDestinationAddress(SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM, (uint32_t)g_sbus_raw_dst_ptr);
 }
 
 

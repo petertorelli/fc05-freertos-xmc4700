@@ -30,12 +30,12 @@
                         <Param id="transfer_flow" value="XMC_DMA_CH_TRANSFER_FLOW_P2M_DMA"/>
                         <Param id="priority" value="XMC_DMA_CH_PRIORITY_7"/>
                         <Param id="block_size" value="25"/>
-                        <Param id="source_address" value="g_rx_sbus_src_ptr"/>
+                        <Param id="source_address" value="g_sbus_src_ptr"/>
                         <Param id="source_address_counter" value="XMC_DMA_CH_ADDRESS_COUNT_MODE_NO_CHANGE"/>
                         <Param id="source_transfer_width" value="XMC_DMA_CH_TRANSFER_WIDTH_8"/>
                         <Param id="source_burst_width" value="XMC_DMA_CH_BURST_LENGTH_1"/>
                         <Param id="source_handshaking" value="XMC_DMA_CH_SRC_HANDSHAKING_HARDWARE"/>
-                        <Param id="destination_address" value="g_rx_sbus_raw_dst_ptr"/>
+                        <Param id="destination_address" value="g_sbus_raw_dst_ptr"/>
                         <Param id="destination_address_counter" value="XMC_DMA_CH_ADDRESS_COUNT_MODE_INCREMENT"/>
                         <Param id="destination_transfer_width" value="XMC_DMA_CH_TRANSFER_WIDTH_8"/>
                         <Param id="destination_burst_width" value="XMC_DMA_CH_BURST_LENGTH_1"/>
