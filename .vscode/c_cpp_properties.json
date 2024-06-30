@@ -1,0 +1,37 @@
+{
+    "version": 4,
+    "env": {
+        "mtbCompilerArgs": [
+            "-c","-mcpu=cortex-m4","--specs=nano.specs","-Og","-mfloat-abi=softfp","-mfpu=fpv4-sp-d16","-mthumb","-ffunction-sections","-fdata-sections","-ffat-lto-objects","-g","-Wall","-pipe"
+        ],
+        "mtbDefaultIncludePath": [
+            ".","bsps/TARGET_APP_KIT_XMC47_RELAX_V1","bsps","bsps/TARGET_APP_KIT_XMC47_RELAX_V1/config/GeneratedSource","bsps/TARGET_APP_KIT_XMC47_RELAX_V1/config","../mtb_shared/freertos/release-v10.5.002/Source/include","../mtb_shared/freertos/release-v10.5.002/Source","../mtb_shared/freertos/release-v10.5.002","../mtb_shared/freertos/release-v10.5.002/Source/portable/COMPONENT_CM4","../mtb_shared/freertos/release-v10.5.002/Source/portable","../mtb_shared/freertos/release-v10.5.002/Source/portable/COMPONENT_CM4/TOOLCHAIN_GCC_ARM","../mtb_shared/retarget-io-cat3/release-v1.1.0","../mtb_shared/abstraction-rtos/release-v1.8.1/include","../mtb_shared/abstraction-rtos/release-v1.8.1","../mtb_shared/abstraction-rtos/release-v1.8.1/include/COMPONENT_FREERTOS","../mtb_shared/clib-support/release-v1.5.0","../mtb_shared/clib-support/release-v1.5.0/TOOLCHAIN_GCC_ARM","../mtb_shared/cmsis/release-v5.8.0/Core/Include","../mtb_shared/cmsis/release-v5.8.0/Core","../mtb_shared/cmsis/release-v5.8.0","../mtb_shared/core-lib/release-v1.4.2/include","../mtb_shared/core-lib/release-v1.4.2","../mtb_shared/mtb-xmclib-cat3/release-v4.4.0/CMSIS/Infineon/COMPONENT_XMC4700/Include","../mtb_shared/mtb-xmclib-cat3/release-v4.4.0/CMSIS/Infineon/COMPONENT_XMC4700","../mtb_shared/mtb-xmclib-cat3/release-v4.4.0/CMSIS/Infineon","../mtb_shared/mtb-xmclib-cat3/release-v4.4.0/CMSIS","../mtb_shared/mtb-xmclib-cat3/release-v4.4.0","../mtb_shared/mtb-xmclib-cat3/release-v4.4.0/XMCLib/inc","../mtb_shared/mtb-xmclib-cat3/release-v4.4.0/XMCLib"
+        ],
+        "mtbDefaultDefines": [
+            "COMPONENT_APP_KIT_XMC47_RELAX_V1","COMPONENT_CAT3","COMPONENT_CM4","COMPONENT_CM4_0","COMPONENT_Debug","COMPONENT_FREERTOS","COMPONENT_GCC_ARM","COMPONENT_MW_ABSTRACTION_RTOS","COMPONENT_MW_CLIB_SUPPORT","COMPONENT_MW_CMSIS","COMPONENT_MW_CORE_LIB","COMPONENT_MW_CORE_MAKE","COMPONENT_MW_DEVICE_DB","COMPONENT_MW_FREERTOS","COMPONENT_MW_MTB_XMCLIB_CAT3","COMPONENT_MW_RECIPE_MAKE_CAT3","COMPONENT_MW_RETARGET_IO_CAT3","COMPONENT_SOFTFP","COMPONENT_XMC4700","COMPONENT_XMC47XX","CORE_NAME_CM4_0=1","CY_APPNAME_fc05","CY_SUPPORTS_DEVICE_VALIDATION","CY_TARGET_BOARD=APP_KIT_XMC47_RELAX_V1","DEBUG=DEBUG","TARGET_APP_KIT_XMC47_RELAX_V1","XMC4700_F144x2048"
+        ]
+    },
+    "configurations": [
+        {
+            "name": "MTB",
+            "compilerPath": "/Applications/ModusToolbox/tools_3.1/gcc/bin/arm-none-eabi-gcc",
+            "compilerArgs": [
+                "${mtbCompilerArgs}"
+            ],
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "intelliSenseMode": "gcc-arm",
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "includePath": [
+                "${mtbDefaultIncludePath}"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "defines": [
+                "${mtbDefaultDefines}"
+            ]
+        }
+    ]
+}

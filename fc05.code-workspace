@@ -23,13 +23,7 @@
         "cortex-debug.openocdPath": "${config:modustoolbox.toolsPath}/openocd/bin/openocd",
         "cortex-debug.JLinkGDBServerPath.windows": "C:/Program Files/SEGGER/JLink/JLinkGDBServerCL.exe",
         "cortex-debug.JLinkGDBServerPath.osx": "/Applications/SEGGER/JLink/JLinkGDBServerCLExe",
-        "cortex-debug.JLinkGDBServerPath.linux": "JLinkGDBServerCLExe",
-        "files.associations": {
-            "cycfg_dmas.h": "c",
-            "functional": "c",
-            "__locale": "c",
-            "cy_retarget_io.h": "c"
-        }
+        "cortex-debug.JLinkGDBServerPath.linux": "JLinkGDBServerCLExe"
     },
     "extensions": {
         "recommendations": [ "marus25.cortex-debug", "ms-vscode.cpptools", "dan-c-underwood.arm" ]
