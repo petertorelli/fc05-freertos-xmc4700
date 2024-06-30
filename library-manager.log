@@ -1,0 +1,186 @@
+Loading the ModusToolbox Technology Packs and Early Access Packs
+Finished loading the ModusToolbox Technology Packs and Early Access Packs (5 ms)
+Loading the tools information
+Finished loading the tools information (11 ms)
+Loading the application in directory '/Users/petertorelli/mtw/fc05-freertos-xmc4700'
+creating application information from 'get_app_info' data
+finished creating application information from 'get_app_info' data (16 ms)
+Finished loading the application data (363 ms total, 340 make)
+Loading asset repository references
+Finished loading the asset repository references (17 ms)
+Loading the manifest data
+Loading super manfiest files from all sources
+Getting manifests from remote and/or local sources
+Processing system manifest 'https://modustoolbox.infineon.com/manifests/mtb-super-manifest/v2.X/mtb-super-manifest-fv2.xml'
+Downloading super manifest file 'https://modustoolbox.infineon.com/manifests/mtb-super-manifest/v2.X/mtb-super-manifest-fv2.xml'
+Finished loading super manifest files from all sources
+Finished download of file 'https://modustoolbox.infineon.com/manifests/mtb-super-manifest/v2.X/mtb-super-manifest-fv2.xml'
+Starting to parse super manifest with URL 'https://modustoolbox.infineon.com/manifests/mtb-super-manifest/v2.X/mtb-super-manifest-fv2.xml'
+Finished parsing super manifest with URL 'https://modustoolbox.infineon.com/manifests/mtb-super-manifest/v2.X/mtb-super-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-ce-manifest/raw/v2.X/mtb-ce-manifest.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-ce-manifest/raw/v2.X/mtb-ce-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-bt-app-manifest/raw/v2.X/mtb-bt-app-manifest.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-bt-app-manifest/raw/v2.X/mtb-bt-app-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/Infineon/cce-app-manifest/raw/v2.X/cce-app-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/Altia-Marketing/altia-ce-manifest/raw/main/altia-ce-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/avnet-iotconnect/avnet-iotc-mtb-ce-manifest/raw/main/avnet-iotc-mtb-ce-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/CyberonEBU/cyberon-mtb-ce-manifest/raw/main/cyberon-mtb-ce-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/edgeimpulse/edgeimpulse-ce-manifest/raw/main/edgeimpulse-ce-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/golioth/mtb-golioth-ce-manifest/raw/main/mtb-golioth-ce-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/memfault/mtb-memfault-ce-manifest/raw/main/mtb-memfault-ce-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/RutronikSystemSolutions/rutronik-ce-manifest/raw/main/rutronik-ce-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/sensiml/sensiml-ce-manifest/raw/main/sensiml-ce-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-bsp-manifest/raw/v2.X/mtb-bsp-manifest.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-bsp-manifest/raw/v2.X/mtb-bsp-capabilities-manifest.json'
+Downloading manifest file 'https://github.com/Infineon/mtb-bsp-manifest/raw/v2.X/mtb-bsp-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-bsp-manifest/raw/v2.X/mtb-bsp-dependencies-manifest.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-bt-bsp-manifest/raw/v2.X/mtb-bt-bsp-manifest.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-bt-bsp-manifest/raw/v2.X/mtb-bt-bsp-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-bt-bsp-manifest/raw/v2.X/mtb-bt-bsp-dependencies-manifest.xml'
+Downloading manifest file 'https://github.com/Inventek/inventek-bsp-manifest/raw/main/inventek-bsp-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/Inventek/inventek-bsp-manifest/raw/main/inventek-bsp-dependencies-manifest.xml'
+Downloading manifest file 'https://github.com/RutronikSystemSolutions/rutronik-bsp-manifest/raw/main/rutronik-bsp-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/RutronikSystemSolutions/rutronik-bsp-manifest/raw/main/rutronik-bsp-dependencies-manifest.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-mw-manifest/raw/v2.X/mtb-mw-manifest.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-mw-manifest/raw/v2.X/mtb-mw-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-mw-manifest/raw/v2.X/mtb-mw-dependencies-manifest.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-bt-mw-manifest/raw/v2.X/mtb-bt-mw-manifest.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-bt-mw-manifest/raw/v2.X/mtb-bt-mw-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-bt-mw-manifest/raw/v2.X/mtb-bt-mw-dependencies-manifest.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-wifi-mw-manifest/raw/v2.X/mtb-wifi-mw-manifest.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-wifi-mw-manifest/raw/v2.X/mtb-wifi-mw-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/Infineon/mtb-wifi-mw-manifest/raw/v2.X/mtb-wifi-mw-dependencies-manifest.xml'
+Downloading manifest file 'https://github.com/avnet-iotconnect/avnet-iotc-mtb-mw-manifest/raw/main/avnet-iotc-mtb-mw-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/CyberonEBU/cyberon-mtb-mw-manifest/raw/main/cyberon-mtb-mw-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/golioth/mtb-golioth-mw-manifest/raw/main/mtb-golioth-mw-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/memfault/mtb-memfault-mw-manifest/raw/main/mtb-memfault-mw-manifest-fv2.xml'
+Downloading manifest file 'https://github.com/sensiml/sensiml-mw-manifest/raw/main/sensiml-mw-manifest-fv2.xml'
+Finished download of file 'https://github.com/Infineon/mtb-ce-manifest/raw/v2.X/mtb-ce-manifest.xml'
+Finished download of file 'https://github.com/Infineon/mtb-ce-manifest/raw/v2.X/mtb-ce-manifest-fv2.xml'
+Finished download of file 'https://github.com/Infineon/mtb-bt-app-manifest/raw/v2.X/mtb-bt-app-manifest.xml'
+Finished download of file 'https://github.com/Infineon/mtb-bt-app-manifest/raw/v2.X/mtb-bt-app-manifest-fv2.xml'
+Finished download of file 'https://github.com/Infineon/cce-app-manifest/raw/v2.X/cce-app-manifest-fv2.xml'
+Finished download of file 'https://github.com/Altia-Marketing/altia-ce-manifest/raw/main/altia-ce-manifest-fv2.xml'
+Finished download of file 'https://github.com/avnet-iotconnect/avnet-iotc-mtb-ce-manifest/raw/main/avnet-iotc-mtb-ce-manifest-fv2.xml'
+Finished download of file 'https://github.com/CyberonEBU/cyberon-mtb-ce-manifest/raw/main/cyberon-mtb-ce-manifest-fv2.xml'
+Finished download of file 'https://github.com/edgeimpulse/edgeimpulse-ce-manifest/raw/main/edgeimpulse-ce-manifest-fv2.xml'
+Finished download of file 'https://github.com/golioth/mtb-golioth-ce-manifest/raw/main/mtb-golioth-ce-manifest-fv2.xml'
+Finished download of file 'https://github.com/memfault/mtb-memfault-ce-manifest/raw/main/mtb-memfault-ce-manifest-fv2.xml'
+Finished download of file 'https://github.com/RutronikSystemSolutions/rutronik-ce-manifest/raw/main/rutronik-ce-manifest-fv2.xml'
+Finished download of file 'https://github.com/sensiml/sensiml-ce-manifest/raw/main/sensiml-ce-manifest-fv2.xml'
+Finished download of file 'https://github.com/Infineon/mtb-bsp-manifest/raw/v2.X/mtb-bsp-manifest.xml'
+Finished download of file 'https://github.com/Infineon/mtb-bsp-manifest/raw/v2.X/mtb-bsp-capabilities-manifest.json'
+Finished download of file 'https://github.com/Infineon/mtb-bsp-manifest/raw/v2.X/mtb-bsp-manifest-fv2.xml'
+Finished download of file 'https://github.com/Infineon/mtb-bsp-manifest/raw/v2.X/mtb-bsp-dependencies-manifest.xml'
+Finished download of file 'https://github.com/Infineon/mtb-bt-bsp-manifest/raw/v2.X/mtb-bt-bsp-manifest.xml'
+Finished download of file 'https://github.com/Infineon/mtb-bt-bsp-manifest/raw/v2.X/mtb-bt-bsp-manifest-fv2.xml'
+Finished download of file 'https://github.com/Infineon/mtb-bt-bsp-manifest/raw/v2.X/mtb-bt-bsp-dependencies-manifest.xml'
+Finished download of file 'https://github.com/Inventek/inventek-bsp-manifest/raw/main/inventek-bsp-manifest-fv2.xml'
+Finished download of file 'https://github.com/Inventek/inventek-bsp-manifest/raw/main/inventek-bsp-dependencies-manifest.xml'
+Finished download of file 'https://github.com/RutronikSystemSolutions/rutronik-bsp-manifest/raw/main/rutronik-bsp-manifest-fv2.xml'
+Finished download of file 'https://github.com/RutronikSystemSolutions/rutronik-bsp-manifest/raw/main/rutronik-bsp-dependencies-manifest.xml'
+Finished download of file 'https://github.com/Infineon/mtb-mw-manifest/raw/v2.X/mtb-mw-manifest.xml'
+Finished download of file 'https://github.com/Infineon/mtb-mw-manifest/raw/v2.X/mtb-mw-manifest-fv2.xml'
+Finished download of file 'https://github.com/Infineon/mtb-mw-manifest/raw/v2.X/mtb-mw-dependencies-manifest.xml'
+Finished download of file 'https://github.com/Infineon/mtb-bt-mw-manifest/raw/v2.X/mtb-bt-mw-manifest.xml'
+Finished download of file 'https://github.com/Infineon/mtb-bt-mw-manifest/raw/v2.X/mtb-bt-mw-manifest-fv2.xml'
+Finished download of file 'https://github.com/Infineon/mtb-bt-mw-manifest/raw/v2.X/mtb-bt-mw-dependencies-manifest.xml'
+Finished download of file 'https://github.com/Infineon/mtb-wifi-mw-manifest/raw/v2.X/mtb-wifi-mw-manifest.xml'
+Finished download of file 'https://github.com/Infineon/mtb-wifi-mw-manifest/raw/v2.X/mtb-wifi-mw-manifest-fv2.xml'
+Finished download of file 'https://github.com/Infineon/mtb-wifi-mw-manifest/raw/v2.X/mtb-wifi-mw-dependencies-manifest.xml'
+Finished download of file 'https://github.com/avnet-iotconnect/avnet-iotc-mtb-mw-manifest/raw/main/avnet-iotc-mtb-mw-manifest-fv2.xml'
+Finished download of file 'https://github.com/CyberonEBU/cyberon-mtb-mw-manifest/raw/main/cyberon-mtb-mw-manifest-fv2.xml'
+Finished download of file 'https://github.com/golioth/mtb-golioth-mw-manifest/raw/main/mtb-golioth-mw-manifest-fv2.xml'
+Finished download of file 'https://github.com/memfault/mtb-memfault-mw-manifest/raw/main/mtb-memfault-mw-manifest-fv2.xml'
+Finished download of file 'https://github.com/sensiml/sensiml-mw-manifest/raw/main/sensiml-mw-manifest-fv2.xml'
+Finished loading the manifest data (2961 ms)
+Loading the device db
+Finished loading the device db (424 ms)
+Starting to refresh dependencies for project 'fc05'.
+Refreshed all dependencies for project 'fc05'.
+0 error(s), 0 warning(s)
+Successfully acquired the information.
+Requested to add the asset 'retarget-io-cat3'.
+Starting to refresh dependencies for project 'fc05'.
+Refreshed all dependencies for project 'fc05'.
+
+Starting to refresh dependencies for project 'fc05'.
+Refreshed all dependencies for project 'fc05'.
+
+Changelog for project "fc05-freertos-xmc4700":
+retarget-io-cat3 version release-v1.1.0 added
+
+Click "Update" to commit the changesUpdating application "fc05-freertos-xmc4700" ...
+Starting to commit changes to the filesystem and project 'fc05'.
+Writing mtb file for asset 'retarget-io-cat3' to the folder '/Users/petertorelli/mtw/fc05-freertos-xmc4700/deps'.
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/freertos/release-v10.5.002 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/retarget-io-cat3/release-v1.1.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/abstraction-rtos/release-v1.8.1 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/clib-support/release-v1.5.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Success: git -C /Users/petertorelli/mtw/mtb_shared/retarget-io-cat3/release-v1.1.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/cmsis/release-v5.8.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Success: git -C /Users/petertorelli/mtw/mtb_shared/abstraction-rtos/release-v1.8.1 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/core-lib/release-v1.4.2 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Success: git -C /Users/petertorelli/mtw/mtb_shared/freertos/release-v10.5.002 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/core-make/release-v3.3.1 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Success: git -C /Users/petertorelli/mtw/mtb_shared/clib-support/release-v1.5.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/.modustoolbox/global/device-db/release-v4.16.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Success: git -C /Users/petertorelli/mtw/mtb_shared/cmsis/release-v5.8.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/mtb-xmclib-cat3/release-v4.4.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Success: git -C /Users/petertorelli/mtw/mtb_shared/core-lib/release-v1.4.2 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/recipe-make-cat3/release-v2.2.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Success: git -C /Users/petertorelli/mtw/mtb_shared/core-make/release-v3.3.1 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/retarget-io-cat3/release-v1.1.0 -c advice.detachedHead=false checkout release-v1.1.0 --force
+Success: git -C /Users/petertorelli/.modustoolbox/global/device-db/release-v4.16.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/abstraction-rtos/release-v1.8.1 -c advice.detachedHead=false checkout release-v1.8.1 --force
+HEAD is now at 4bbe3f8 Upload retarget-io-cat3 [1515]
+Success: git -C /Users/petertorelli/mtw/mtb_shared/retarget-io-cat3/release-v1.1.0 -c advice.detachedHead=false checkout release-v1.1.0 --force
+Finished processing retarget-io-cat3
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/freertos/release-v10.5.002 -c advice.detachedHead=false checkout release-v10.5.002 --force
+HEAD is now at 9941284 Upload abstraction-rtos [2455]
+Success: git -C /Users/petertorelli/mtw/mtb_shared/abstraction-rtos/release-v1.8.1 -c advice.detachedHead=false checkout release-v1.8.1 --force
+Finished processing abstraction-rtos
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/clib-support/release-v1.5.0 -c advice.detachedHead=false checkout release-v1.5.0 --force
+HEAD is now at 654db3a Upload clib-support [2455]
+Success: git -C /Users/petertorelli/mtw/mtb_shared/clib-support/release-v1.5.0 -c advice.detachedHead=false checkout release-v1.5.0 --force
+Finished processing clib-support
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/cmsis/release-v5.8.0 -c advice.detachedHead=false checkout release-v5.8.0 --force
+HEAD is now at e175e03 Upload freertos 10.5.002.657 [2307]
+Success: git -C /Users/petertorelli/mtw/mtb_shared/freertos/release-v10.5.002 -c advice.detachedHead=false checkout release-v10.5.002 --force
+Finished processing freertos
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/core-lib/release-v1.4.2 -c advice.detachedHead=false checkout release-v1.4.2 --force
+HEAD is now at ce02f64 Upload cmsis 5.8.0.50
+Success: git -C /Users/petertorelli/mtw/mtb_shared/cmsis/release-v5.8.0 -c advice.detachedHead=false checkout release-v5.8.0 --force
+Finished processing cmsis
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/core-make/release-v3.3.1 -c advice.detachedHead=false checkout release-v3.3.1 --force
+HEAD is now at e28913a Upload core-lib [2455]
+Success: git -C /Users/petertorelli/mtw/mtb_shared/core-lib/release-v1.4.2 -c advice.detachedHead=false checkout release-v1.4.2 --force
+Finished processing core-lib
+Starting: git -C /Users/petertorelli/.modustoolbox/global/device-db/release-v4.16.0 -c advice.detachedHead=false checkout release-v4.16.0 --force
+HEAD is now at 58bf444 Upload core-make 3.3.1.5153 [2252]
+Success: git -C /Users/petertorelli/mtw/mtb_shared/core-make/release-v3.3.1 -c advice.detachedHead=false checkout release-v3.3.1 --force
+Finished processing core-make
+HEAD is now at 08dc1e80 Upload device-db 4.16.0.6098 [2510]
+Success: git -C /Users/petertorelli/.modustoolbox/global/device-db/release-v4.16.0 -c advice.detachedHead=false checkout release-v4.16.0 --force
+Finished processing device-db
+Success: git -C /Users/petertorelli/mtw/mtb_shared/mtb-xmclib-cat3/release-v4.4.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/mtb-xmclib-cat3/release-v4.4.0 -c advice.detachedHead=false checkout release-v4.4.0 --force
+HEAD is now at b0e2c58 Upload mtb-xmclib-cat3 4.4.0.4715 [2493]
+Success: git -C /Users/petertorelli/mtw/mtb_shared/mtb-xmclib-cat3/release-v4.4.0 -c advice.detachedHead=false checkout release-v4.4.0 --force
+Finished processing mtb-xmclib-cat3
+Success: git -C /Users/petertorelli/mtw/mtb_shared/recipe-make-cat3/release-v2.2.0 fetch --recurse-submodules=no --tags --force cypress --update-head-ok "refs/heads/*:refs/heads/*" --quiet
+Starting: git -C /Users/petertorelli/mtw/mtb_shared/recipe-make-cat3/release-v2.2.0 -c advice.detachedHead=false checkout release-v2.2.0 --force
+HEAD is now at 0066505 Upload recipe-make-cat3 2.2.0.5066 [2215]
+Success: git -C /Users/petertorelli/mtw/mtb_shared/recipe-make-cat3/release-v2.2.0 -c advice.detachedHead=false checkout release-v2.2.0 --force
+Finished processing recipe-make-cat3
+Successfully committed changes to the project 'fc05'.
+0 error(s), 0 warning(s)
+Successfully updated application "fc05-freertos-xmc4700"
+
+Starting to refresh dependencies for project 'fc05'.
+Refreshed all dependencies for project 'fc05'.
+
+Summary:
+Successfully updated application "fc05-freertos-xmc4700"
+Successfully refreshed dependencies.
+Done.
