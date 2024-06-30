@@ -29,7 +29,8 @@
             "cybsp.h": "c",
             "cy_utils.h": "c",
             "stdlib.h": "c",
-            "task_rx.h": "c"
+            "task_rx.h": "c",
+            "semphr.h": "c"
         }
     },
     "extensions": {

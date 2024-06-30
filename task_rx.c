@@ -35,10 +35,13 @@ static sbus_data_t g_sbus_data;
 void
 rx_force_resync(void)
 {
-    g_synced        = false;
-    g_in_sync_mode  = false;
-    g_got_last_tick = false;
-    g_got_first_dma = false;
+    if (g_synced == true)
+    {
+        g_synced        = false;
+        g_in_sync_mode  = false;
+        g_got_last_tick = false;
+        g_got_first_dma = false;
+    }
 }
 
 void
@@ -157,8 +160,9 @@ void
 rx_task(void *pvParameters)
 {
     XMC_UNUSED_ARG(pvParameters);
-    bool       stat = false;
-    TickType_t t    = xTaskGetTickCount();
+    bool       stat  = false;
+    TickType_t t     = 0u;
+    TickType_t delay = FC_CFG_RX_UPDATE_DELAY_MS;
 
     for (;;)
     {
@@ -168,38 +172,50 @@ rx_task(void *pvParameters)
              * a fill at least once */
             if (g_got_first_dma)
             {
+                t = xTaskGetTickCount();
+
                 /* Prevent DMA interrupt from corrupting the current buffer */
                 g_sbus_read_raw_fence = true;
                 stat = decode_sbus(g_sbus_ready_raw_ptr, &g_sbus_data);
+ //               memset((void *)g_sbus_ready_raw_ptr, 0, SBUS_PACKET_SIZE_BYTES);
                 g_sbus_read_raw_fence = false;
-                if (stat)
+                if (!stat)
                 {
-                    printf("---------- Failed at %lu\n", t);
-                    rx_force_resync();
-                }
 #ifdef RX_PRINT_RAW
-                printf("%08lu : ", t);
-                for (int i = 0; i < 25; ++i)
-                {
-                    printf("%02x", g_sbus_ready_raw_ptr[i]);
-                }
-                printf("\n");
+                    printf("%08lu : ", t);
+                    for (int i = 0; i < 25; ++i)
+                    {
+                        printf("%02x", g_sbus_ready_raw_ptr[i]);
+                    }
+                    printf("\n");
 #endif
 #if 1
-                printf("%08lu : %4lu %4lu %4lu %4lu lost=%d fsafe=%d\n",
-                       t,
-                       g_sbus_data.ch[0],
-                       g_sbus_data.ch[1],
-                       g_sbus_data.ch[2],
-                       g_sbus_data.ch[3],
-                       g_sbus_data.lost_frame,
-                       g_sbus_data.failsafe);
+                    printf("%08lu : %4lu %4lu %4lu %4lu lost=%d fsafe=%d\n",
+                        t,
+                        g_sbus_data.ch[0],
+                        g_sbus_data.ch[1],
+                        g_sbus_data.ch[2],
+                        g_sbus_data.ch[3],
+                        g_sbus_data.lost_frame,
+                        g_sbus_data.failsafe);
 #endif
-                /* TODO: Response to FAILSAFE and LOST_FRAME */
-                vTaskDelay(FC_CFG_RX_UPDATE_DELAY_MS);
+                }
+                else /* stat == true -> Decoder failed */
+                {
+                    rx_force_resync();
+                }
             }
+            /* TODO: Response to FAILSAFE and LOST_FRAME */
+            /**
+             * @brief Failsafe note
+             * 
+             * If the TX is lots, it will continue sending packets with
+             * fsafe = 0x08. Study this. What other failsafes are there? 
+             * What does this have to do with the TX failsafe option?
+             */
+            delay = FC_CFG_RX_UPDATE_DELAY_MS;
         }
-        else
+        else /* g_synced == false */
         {
             /* Need to reset UART and DMA if entering sync mode */
             if (!g_in_sync_mode)
@@ -218,7 +234,7 @@ rx_task(void *pvParameters)
                     NVIC_EnableIRQ(SBUS_SYNC_IRQN);
                 }
             }
-            else
+            else /* g_in_sync_mode == true*/
             {
                 /* We can't trust the raw value in g_last_tick */
                 if (g_got_last_tick)
@@ -235,8 +251,10 @@ rx_task(void *pvParameters)
                     }
                 }
             }
-            vTaskDelay(1);
+            // Let's speed things up a little
+            delay = 1;
         }
+        vTaskDelay(delay);
     }
 }
 
