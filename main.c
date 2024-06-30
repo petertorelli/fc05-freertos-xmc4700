@@ -59,11 +59,9 @@ GPDMA0_INTERRUPT_HANDLER(void)
     g_rx_got_first_dma = true;
     XMC_DMA_CH_ClearEventStatus(
         SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM, SBUS_DMA_HDLR_events);
-    /* Don't swap buffers if a process is reading one, just keep refilling the
-     * current buffer until the fence opens. */
+    // Don't swap buffers is a task is reading the other one
     if (!g_rx_sbus_read_raw_fence)
     {
-        // Swap...
         if (g_rx_sbus_raw_dst_ptr == (void *)&(g_rx_sbus_raw_a[0]))
         {
             g_rx_sbus_ready_raw_ptr = g_rx_sbus_raw_a;
@@ -75,6 +73,7 @@ GPDMA0_INTERRUPT_HANDLER(void)
             g_rx_sbus_raw_dst_ptr   = (void *)&(g_rx_sbus_raw_a[0]);
         }
     }
+    // The re-synch requires not restarting the DMA
     if (g_stop_dma_req)
     {
         g_stop_dma_ack = true;
