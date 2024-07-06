@@ -1,5 +1,14 @@
 #include "task_rx.h"
 
+/**
+ * Since this task is the "Keeper of the SBUS DMA", there's no queues or
+ * semaphores: just a bunch globals. The SBUS data comes in at 10 ms intervals,
+ * which is faster that the PID filters that consume the data can adjust, so
+ * there's really no need to notify every time a DMA completes. The sole task
+ * here just updates a structure (and provides access to it) less frequently
+ * than it is updated by the reciever UART.
+ */
+
 // double buffer to prevent shearing during DMA update, blocking DMA loses sync
 static uint8_t g_sbus_raw_a[25];
 static uint8_t g_sbus_raw_b[25];
@@ -23,15 +32,6 @@ volatile void *g_sbus_src_ptr     = (void *)&(SBUS_UART_HW->RBUF);
 
 static sbus_data_t g_sbus_data;
 
-/**
- * @brief TODO: Semaphore, Message, or globals?
- *
- * The resync logic uses some globals to set the state. But there are also
- * semaphores and message queues. I'm not sure if it makes sense to block
- * on a semaphore because the interrupts happen faster then the clock tick
- * (e.g., 100,000 baud). And message queues just seem like a lot of work for
- * the same thing that can be accomplished with some simple globals?
- */
 void
 rx_force_resync(void)
 {
