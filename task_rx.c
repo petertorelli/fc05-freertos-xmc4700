@@ -2,7 +2,7 @@
 
 /**
  * Since this task is the "Keeper of the SBUS DMA", there's no queues or
- * semaphores: just a bunch globals. The SBUS data comes in at 10 ms intervals,
+ * semaphores: just globals. The SBUS data comes in at 10 ms intervals,
  * which is faster that the PID filters that consume the data can adjust, so
  * there's really no need to notify every time a DMA completes. The sole task
  * here just updates a structure (and provides access to it) less frequently
