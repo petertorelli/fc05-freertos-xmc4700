@@ -8,7 +8,7 @@
 #include "cy_utils.h"
 #include "cy_retarget_io.h"
 
-#include "task_rx.h"
+#include "task_rx_api.h"
 
 #ifdef UNIT_TEST_01_JAM_RX
 __NO_RETURN static void

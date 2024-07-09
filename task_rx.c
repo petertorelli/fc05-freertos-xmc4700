@@ -9,6 +9,15 @@
  * than it is updated by the reciever UART.
  */
 
+/* TODO: Response to FAILSAFE and LOST_FRAME */
+/**
+ * @brief Failsafe note
+ *
+ * If the link is lost, Rx will continue sending packets with fsafe = 0x08.
+ * Study this. What other failsafes are there?  What does this have to do with
+ * the TX failsafe option?
+ */
+
 // double buffer to prevent shearing during DMA update, blocking DMA loses sync
 static uint8_t g_sbus_raw_a[25];
 static uint8_t g_sbus_raw_b[25];
@@ -120,7 +129,7 @@ rx_uart_ready_set(void)
 }
 
 /* TODO: Proper error codes */
-bool
+static bool
 decode_sbus(volatile uint8_t *raw, sbus_data_t *ptr)
 {
     if (raw[0] != SBUS_HEADER)
@@ -156,63 +165,64 @@ decode_sbus(volatile uint8_t *raw, sbus_data_t *ptr)
     return false;
 }
 
+/**
+ * @brief The Rx state machine task.
+ * 
+ * The two main states are SYNCED and NOT SYNCED. This refers to the alignment
+ * of the DMA packet. We want to make sure the DMA starts in the quiet period
+ * of the 10 ms SBUS packets. SYNCED means the DMA engine is in synch with the
+ * transmission. NOT SYNCED means it is searching for a sync.
+ * 
+ * 1. SYNCED
+ * 
+ * When synced, make sure at least one DMA transfer has completed, otherwise
+ * there will be garbage in the buffer. The "g_got_first_dma" flag is set
+ * by the DMA completion interrupt. Once the 1st DMA has completed, the task
+ * will decode it into the global "g_sbus_data" variable. However, the decoder
+ * is fenced by "g_sbus_read_raw_fence", which prevents the DMA interrupt from
+ * swapping buffers. We don't want an interrupt to corrupt the raw data while
+ * the decoder is decoding.
+ * 
+ * 2. NOT-SYNCED
+ * 
+ * If the DMA is not starting in the quiet region, then the RX pin is switched
+ * to be a GPIO input interrupt generation line. Every time the ISR fires, it
+ * means a falling edge was detected. If there has been at least 3ms since the
+ * last falling edge, it means the quiet zone has started and GPIO can be
+ * switched back to the Rx function, and the DMA engine is started.
+ * 
+ * If sync is lost after DMA is running, the DMA must complete first before
+ * disabling it and taking over the Rx pin. This is done with the REQ/ACK 
+ * signals "g_stop_dma_req" and "g_stop_dma_ack". Any further DMA interrupts
+ * will be ignored since it is not restarted, and we can stop the UART and swap
+ * the Rx pin function.
+ * 
+ * @param pvParameters 
+ */
 void
 rx_task(void *pvParameters)
 {
     XMC_UNUSED_ARG(pvParameters);
-    bool       stat  = false;
-    TickType_t t     = 0u;
     TickType_t delay = FC_CFG_RX_UPDATE_DELAY_MS;
 
     for (;;)
     {
         if (g_synced)
         {
-            /* Prevent reading all zeroes or bogus data if DMA hasn't completed
-             * a fill at least once */
+            /* Contents of the DMA buffer are bogus until first completion. */
             if (g_got_first_dma)
             {
-                t = xTaskGetTickCount();
-
+                bool       err = false;
+                TickType_t t   = xTaskGetTickCount();
                 /* Prevent DMA interrupt from corrupting the current buffer */
                 g_sbus_read_raw_fence = true;
-                stat = decode_sbus(g_sbus_ready_raw_ptr, &g_sbus_data);
- //               memset((void *)g_sbus_ready_raw_ptr, 0, SBUS_PACKET_SIZE_BYTES);
+                err = decode_sbus(g_sbus_ready_raw_ptr, &g_sbus_data);
                 g_sbus_read_raw_fence = false;
-                if (!stat)
-                {
-#ifdef RX_PRINT_RAW
-                    printf("%08lu : ", t);
-                    for (int i = 0; i < 25; ++i)
-                    {
-                        printf("%02x", g_sbus_ready_raw_ptr[i]);
-                    }
-                    printf("\n");
-#endif
-#if 1
-                    printf("%08lu : %4lu %4lu %4lu %4lu lost=%d fsafe=%d\n",
-                        t,
-                        g_sbus_data.ch[0],
-                        g_sbus_data.ch[1],
-                        g_sbus_data.ch[2],
-                        g_sbus_data.ch[3],
-                        g_sbus_data.lost_frame,
-                        g_sbus_data.failsafe);
-#endif
-                }
-                else /* stat == true -> Decoder failed */
+                if (err)
                 {
                     rx_force_resync();
                 }
             }
-            /* TODO: Response to FAILSAFE and LOST_FRAME */
-            /**
-             * @brief Failsafe note
-             * 
-             * If the TX is lots, it will continue sending packets with
-             * fsafe = 0x08. Study this. What other failsafes are there? 
-             * What does this have to do with the TX failsafe option?
-             */
             delay = FC_CFG_RX_UPDATE_DELAY_MS;
         }
         else /* g_synced == false */
@@ -285,4 +295,31 @@ rx_setup(void)
     NVIC_SetPriority(SBUS_SYNC_IRQN,
                      NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 63, 0));
     NVIC_EnableIRQ(SBUS_SYNC_IRQN);
+}
+
+static int32_t
+map32s(int32_t x, int32_t imin, int32_t imax, int32_t omin, int32_t omax)
+{
+    return (x - imin) * (omax - omin) / (imax - imin) + omin;
+}
+
+/**
+ * @brief Returns the left-right axis as an int16, from -1000 to 1000,
+ * where the range is fixed point percentage with one sigdigit, e.g.,
+ * -100.0% to 100.0%. This range is mapped from the standard SBUS range
+ * of 172 to 1811 (midpoint of 992).
+ *
+ * @return uint32_t
+ */
+int32_t
+rx_lri32(void)
+{
+    return map32s(g_sbus_data.ch[1], SBUS_MIN, SBUS_MAX, -1000, 1000);
+}
+
+uint32_t
+rx_get_sbus_steering(void)
+{
+    // TODO: Depends on transmitter configuration!
+    return g_sbus_data.ch[1];
 }
