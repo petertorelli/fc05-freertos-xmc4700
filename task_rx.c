@@ -1,18 +1,24 @@
 #include "task_rx.h"
 
 /**
- * Since this task is the "Keeper of the SBUS DMA", there's no queues or
- * semaphores: just globals. The SBUS data comes in at 10 ms intervals,
- * which is faster that the PID filters that consume the data can adjust, so
- * there's really no need to notify every time a DMA completes. The sole task
- * here just updates a structure (and provides access to it) less frequently
- * than it is updated by the reciever UART.
- */
+@startuml
+    STARTUP --> WAITING_FOR_FIRST_EDGE : Switch to INT mode
+    WAITING_FOR_FIRST_EDGE --> WAITING_FOR_FIRST_EDGE
+    WAITING_FOR_FIRST_EDGE --> WATCHING_EDGES : First INT
+    WATCHING_EDGES --> WATCHING_EDGES
+    WATCHING_EDGES --> WAITING_FOR_FIRST_DMA : Switch to DMA Mode
+    WAITING_FOR_FIRST_DMA --> WAITING_FOR_FIRST_DMA
+    WAITING_FOR_FIRST_DMA --> DMA_FLOWING : First DMA complete
+    DMA_FLOWING --> DMA_FLOWING : Decoding
+    DMA_FLOWING --> WAITING_FOR_DMA_HALT : Decode Error
+    WAITING_FOR_DMA_HALT --> WAITING_FOR_DMA_HALT
+    WAITING_FOR_DMA_HALT --> DMA_HALTED : Final DMA IRQ
+    DMA_HALTED --> WAITING_FOR_FIRST_EDGE : Switch to INT mode
+@enduml
+*/
 
-/* TODO: Response to FAILSAFE and LOST_FRAME */
 /**
- * @brief Failsafe note
- *
+ * TODO:
  * If the link is lost, Rx will continue sending packets with fsafe = 0x08.
  * Study this. What other failsafes are there?  What does this have to do with
  * the TX failsafe option?
@@ -21,17 +27,11 @@
 // double buffer to prevent shearing during DMA update, blocking DMA loses sync
 static uint8_t g_sbus_raw_a[25];
 static uint8_t g_sbus_raw_b[25];
-static bool    g_synced       = false;
-static bool    g_in_sync_mode = true;
 
 // For the RX pin's interrupt ISR:
-static volatile TickType_t g_last_tick     = 0;
-static volatile bool       g_got_last_tick = false;
+static volatile TickType_t g_last_tick = 0;
 
 // For the DMA ISR:
-static volatile bool     g_got_first_dma       = false;
-static volatile bool     g_stop_dma_req        = false;
-static volatile bool     g_stop_dma_ack        = false;
 static volatile uint8_t *g_sbus_ready_raw_ptr  = g_sbus_raw_b;
 static volatile bool     g_sbus_read_raw_fence = false;
 
@@ -41,33 +41,24 @@ volatile void *g_sbus_src_ptr     = (void *)&(SBUS_UART_HW->RBUF);
 
 static sbus_data_t g_sbus_data;
 
-void
-rx_force_resync(void)
-{
-    if (g_synced == true)
-    {
-        g_synced        = false;
-        g_in_sync_mode  = false;
-        g_got_last_tick = false;
-        g_got_first_dma = false;
-    }
-}
+volatile state_t g_state = STATE_STARTUP;
 
+/* The ISR when we are in edge-counting mode. */
 void
 SBUS_SYNC_HANDLER(void)
 {
-    g_last_tick     = xTaskGetTickCount();
-    g_got_last_tick = true;
+    g_last_tick = xTaskGetTickCount();
+    g_state     = STATE_WATCHING_EDGES;
 }
 
+/* The ISR when we are in sync'd DMA mode. */
 /* This should fire every 10ms = FrSky XM+ Rx. */
 void
 GPDMA0_INTERRUPT_HANDLER(void)
 {
-    g_got_first_dma = true;
     XMC_DMA_CH_ClearEventStatus(
         SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM, SBUS_DMA_HDLR_events);
-    // Don't swap buffers is a task is reading the other one
+    /* Don't swap buffers is a task is reading the other one */
     if (!g_sbus_read_raw_fence)
     {
         if (g_sbus_raw_dst_ptr == (void *)&(g_sbus_raw_a[0]))
@@ -81,15 +72,23 @@ GPDMA0_INTERRUPT_HANDLER(void)
             g_sbus_raw_dst_ptr   = (void *)&(g_sbus_raw_a[0]);
         }
     }
-    // The re-synch requires not restarting the DMA
-    if (g_stop_dma_req)
+    switch (g_state)
     {
-        g_stop_dma_ack = true;
-    }
-    else
-    {
-        SBUS_DMA_HDLR_reload();
-        XMC_DMA_CH_Enable(SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM);
+        case STATE_WAITING_FOR_DMA_HALT:
+            rx_change_state(STATE_DMA_HALTED);
+            break;
+        case STATE_DMA_FLOWING:
+        case STATE_WAITING_FOR_FIRST_DMA:
+            SBUS_DMA_HDLR_reload();
+            XMC_DMA_CH_Enable(SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM);
+            rx_change_state(STATE_DMA_FLOWING);
+            break;
+        default:
+            /* These should be the only three valid states to be here! */
+            while (1)
+            {
+            }
+            break;
     }
 }
 
@@ -165,104 +164,103 @@ decode_sbus(volatile uint8_t *raw, sbus_data_t *ptr)
     return false;
 }
 
+static void
+rx_read_and_decode(void)
+{
+    bool       err = false;
+    TickType_t t   = xTaskGetTickCount();
+    /* Prevent DMA interrupt from corrupting the current buffer */
+    g_sbus_read_raw_fence = true;
+    err                   = decode_sbus(g_sbus_ready_raw_ptr, &g_sbus_data);
+    g_sbus_read_raw_fence = false;
+    if (err)
+    {
+        /* Force a resync */
+        rx_change_state(STATE_WAITING_FOR_DMA_HALT);
+    }
+    else
+    {
+        printf("%lu %5lu %5lu %5lu %5lu\n",
+               t,
+               g_sbus_data.ch[0],
+               g_sbus_data.ch[1],
+               g_sbus_data.ch[2],
+               g_sbus_data.ch[3]);
+    }
+}
+
+static void
+rx_switch_to_dma_mode(void)
+{
+    NVIC_DisableIRQ(SBUS_SYNC_IRQN);
+    XMC_UART_CH_Start(SBUS_UART_HW);
+    SBUS_DMA_HDLR_reload();
+    rx_change_state(STATE_WAITING_FOR_FIRST_DMA);
+    XMC_DMA_CH_Enable(SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM);
+}
+
+static void
+rx_switch_to_edge_detect_mode(void)
+{
+    rx_uart_ready_set();
+    rx_change_state(STATE_WAITING_FOR_FIRST_EDGE);
+    NVIC_EnableIRQ(SBUS_SYNC_IRQN);
+}
+
 /**
- * @brief The Rx state machine task.
- * 
- * The two main states are SYNCED and NOT SYNCED. This refers to the alignment
- * of the DMA packet. We want to make sure the DMA starts in the quiet period
- * of the 10 ms SBUS packets. SYNCED means the DMA engine is in synch with the
- * transmission. NOT SYNCED means it is searching for a sync.
- * 
- * 1. SYNCED
- * 
- * When synced, make sure at least one DMA transfer has completed, otherwise
- * there will be garbage in the buffer. The "g_got_first_dma" flag is set
- * by the DMA completion interrupt. Once the 1st DMA has completed, the task
- * will decode it into the global "g_sbus_data" variable. However, the decoder
- * is fenced by "g_sbus_read_raw_fence", which prevents the DMA interrupt from
- * swapping buffers. We don't want an interrupt to corrupt the raw data while
- * the decoder is decoding.
- * 
- * 2. NOT-SYNCED
- * 
- * If the DMA is not starting in the quiet region, then the RX pin is switched
- * to be a GPIO input interrupt generation line. Every time the ISR fires, it
- * means a falling edge was detected. If there has been at least 3ms since the
- * last falling edge, it means the quiet zone has started and GPIO can be
- * switched back to the Rx function, and the DMA engine is started.
- * 
- * If sync is lost after DMA is running, the DMA must complete first before
- * disabling it and taking over the Rx pin. This is done with the REQ/ACK 
- * signals "g_stop_dma_req" and "g_stop_dma_ack". Any further DMA interrupts
- * will be ignored since it is not restarted, and we can stop the UART and swap
- * the Rx pin function.
- * 
- * @param pvParameters 
+ * @brief Change the state, and preserve the last state for debugging.
+ *
+ * Note: this may be called from within an interrupt; so don't overload it.
+ *
+ * @param nstate - The new state to change to
  */
+void
+rx_change_state(state_t nstate)
+{
+    static state_t last_state = STATE_NONE;
+    last_state                = g_state;
+    g_state                   = nstate;
+}
+
 void
 rx_task(void *pvParameters)
 {
     XMC_UNUSED_ARG(pvParameters);
-    TickType_t delay = FC_CFG_RX_UPDATE_DELAY_MS;
+    static TickType_t delay = FC_CFG_RX_UPDATE_DELAY_MS;
+    TickType_t        dt;
 
     for (;;)
     {
-        if (g_synced)
+        switch (g_state)
         {
-            /* Contents of the DMA buffer are bogus until first completion. */
-            if (g_got_first_dma)
-            {
-                bool       err = false;
-                TickType_t t   = xTaskGetTickCount();
-                /* Prevent DMA interrupt from corrupting the current buffer */
-                g_sbus_read_raw_fence = true;
-                err = decode_sbus(g_sbus_ready_raw_ptr, &g_sbus_data);
-                g_sbus_read_raw_fence = false;
-                if (err)
+            case STATE_STARTUP:
+            case STATE_DMA_HALTED:
+                rx_switch_to_edge_detect_mode();
+                break;
+            case STATE_WAITING_FOR_FIRST_EDGE:
+                /* Task runs at 1ms when edge-detecting. */
+                delay = FC_CFG_RX_EDGE_DELAY_MS;
+                break;
+            case STATE_WATCHING_EDGES: {
+                dt = xTaskGetTickCount() - g_last_tick;
+                if (dt > FC_FCG_RX_SYNC_WINDOW_MS)
                 {
-                    rx_force_resync();
+                    rx_switch_to_dma_mode();
+                    delay = FC_CFG_RX_UPDATE_DELAY_MS;
                 }
+                break;
             }
-            delay = FC_CFG_RX_UPDATE_DELAY_MS;
-        }
-        else /* g_synced == false */
-        {
-            /* Need to reset UART and DMA if entering sync mode */
-            if (!g_in_sync_mode)
-            {
-                /* You can't just disable the DMA (Sec. 5.2.8), you have to let
-                 * it complete it's last transaction, hence the REQ/ACK. */
-                g_stop_dma_req = true;
-                if (g_stop_dma_ack)
+            case STATE_DMA_FLOWING:
+                rx_read_and_decode();
+                break;
+            case STATE_WAITING_FOR_DMA_HALT:
+            case STATE_WAITING_FOR_FIRST_DMA:
+                break;
+            default:
+                while (1)
                 {
-                    g_stop_dma_ack = false;
-                    rx_uart_ready_set();
-                    g_got_last_tick = false;
-                    g_got_first_dma = false;
-                    g_in_sync_mode  = true;
-                    /* Start listening for RX interrupts */
-                    NVIC_EnableIRQ(SBUS_SYNC_IRQN);
-                }
-            }
-            else /* g_in_sync_mode == true*/
-            {
-                /* We can't trust the raw value in g_last_tick */
-                if (g_got_last_tick)
-                {
-                    TickType_t dt = xTaskGetTickCount() - g_last_tick;
-                    if (dt > FC_FCG_RX_SYNC_DELAY_MS)
-                    {
-                        NVIC_DisableIRQ(SBUS_SYNC_IRQN);
-                        XMC_UART_CH_Start(SBUS_UART_HW);
-                        SBUS_DMA_HDLR_reload();
-                        g_stop_dma_req = false;
-                        XMC_DMA_CH_Enable(SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM);
-                        g_synced = true;
-                    }
-                }
-            }
-            // Let's speed things up a little
-            delay = 1;
+                }; // TODO: Error handling in state machine
+                break;
         }
         vTaskDelay(delay);
     }
@@ -283,7 +281,7 @@ rx_setup(void)
     {
         CY_ASSERT(0);
     }
-
+// TODO: Do we need this?
     rx_uart_ready_set();
 
     /* Setup the DMA interrupt, but don't start it until we sync */
@@ -295,26 +293,6 @@ rx_setup(void)
     NVIC_SetPriority(SBUS_SYNC_IRQN,
                      NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 63, 0));
     NVIC_EnableIRQ(SBUS_SYNC_IRQN);
-}
-
-static int32_t
-map32s(int32_t x, int32_t imin, int32_t imax, int32_t omin, int32_t omax)
-{
-    return (x - imin) * (omax - omin) / (imax - imin) + omin;
-}
-
-/**
- * @brief Returns the left-right axis as an int16, from -1000 to 1000,
- * where the range is fixed point percentage with one sigdigit, e.g.,
- * -100.0% to 100.0%. This range is mapped from the standard SBUS range
- * of 172 to 1811 (midpoint of 992).
- *
- * @return uint32_t
- */
-int32_t
-rx_lri32(void)
-{
-    return map32s(g_sbus_data.ch[1], SBUS_MIN, SBUS_MAX, -1000, 1000);
 }
 
 uint32_t
