@@ -169,6 +169,50 @@ extern "C" {
 #define CYBSP_ETH_TXD1_PORT XMC_GPIO_PORT2
 #define CYBSP_ETH_TXD1_PORT_NUM 2U
 #define CYBSP_ETH_TXD1_PIN 9U
+#define ioss_0_port_3_pin_0_ENABLED 1U
+#define ioss_0_port_3_pin_0_PORT XMC_GPIO_PORT3
+#define ioss_0_port_3_pin_0_PORT_NUM 3U
+#define ioss_0_port_3_pin_0_PIN 0U
+#ifndef ioss_0_port_3_pin_0_ALT
+    #define ioss_0_port_3_pin_0_ALT 0U
+#endif
+#define ioss_0_port_3_pin_0_MODE (XMC_GPIO_MODE_OUTPUT_PUSH_PULL | ioss_0_port_3_pin_0_ALT)
+#ifndef ioss_0_port_3_pin_0_HWO
+    #define ioss_0_port_3_pin_0_HWO XMC_GPIO_HWCTRL_DISABLED
+#endif
+#define ioss_0_port_3_pin_12_ENABLED 1U
+#define ioss_0_port_3_pin_12_PORT XMC_GPIO_PORT3
+#define ioss_0_port_3_pin_12_PORT_NUM 3U
+#define ioss_0_port_3_pin_12_PIN 12U
+#ifndef ioss_0_port_3_pin_12_ALT
+    #define ioss_0_port_3_pin_12_ALT 0U
+#endif
+#define ioss_0_port_3_pin_12_MODE (XMC_GPIO_MODE_OUTPUT_PUSH_PULL | ioss_0_port_3_pin_12_ALT)
+#ifndef ioss_0_port_3_pin_12_HWO
+    #define ioss_0_port_3_pin_12_HWO XMC_GPIO_HWCTRL_DISABLED
+#endif
+#define ioss_0_port_3_pin_13_ENABLED 1U
+#define ioss_0_port_3_pin_13_PORT XMC_GPIO_PORT3
+#define ioss_0_port_3_pin_13_PORT_NUM 3U
+#define ioss_0_port_3_pin_13_PIN 13U
+#ifndef ioss_0_port_3_pin_13_ALT
+    #define ioss_0_port_3_pin_13_ALT 0U
+#endif
+#define ioss_0_port_3_pin_13_MODE (XMC_GPIO_MODE_OUTPUT_PUSH_PULL | ioss_0_port_3_pin_13_ALT)
+#ifndef ioss_0_port_3_pin_13_HWO
+    #define ioss_0_port_3_pin_13_HWO XMC_GPIO_HWCTRL_DISABLED
+#endif
+#define ioss_0_port_3_pin_3_ENABLED 1U
+#define ioss_0_port_3_pin_3_PORT XMC_GPIO_PORT3
+#define ioss_0_port_3_pin_3_PORT_NUM 3U
+#define ioss_0_port_3_pin_3_PIN 3U
+#ifndef ioss_0_port_3_pin_3_ALT
+    #define ioss_0_port_3_pin_3_ALT 0U
+#endif
+#define ioss_0_port_3_pin_3_MODE (XMC_GPIO_MODE_OUTPUT_PUSH_PULL | ioss_0_port_3_pin_3_ALT)
+#ifndef ioss_0_port_3_pin_3_HWO
+    #define ioss_0_port_3_pin_3_HWO XMC_GPIO_HWCTRL_DISABLED
+#endif
 #define CYBSP_MMC_CMD_PORT XMC_GPIO_PORT3
 #define CYBSP_MMC_CMD_PORT_NUM 3U
 #define CYBSP_MMC_CMD_PIN 5U
@@ -238,6 +282,10 @@ extern const XMC_GPIO_CONFIG_t CYBSP_USER_BTN_config;
 extern const XMC_GPIO_CONFIG_t CYBSP_DEBUG_UART_RX_config;
 extern const XMC_GPIO_CONFIG_t CYBSP_DEBUG_UART_TX_config;
 extern const XMC_GPIO_CONFIG_t ioss_0_port_2_pin_14_config;
+extern const XMC_GPIO_CONFIG_t ioss_0_port_3_pin_0_config;
+extern const XMC_GPIO_CONFIG_t ioss_0_port_3_pin_12_config;
+extern const XMC_GPIO_CONFIG_t ioss_0_port_3_pin_13_config;
+extern const XMC_GPIO_CONFIG_t ioss_0_port_3_pin_3_config;
 extern const XMC_GPIO_CONFIG_t CYBSP_USER_LED2_config;
 extern const XMC_GPIO_CONFIG_t CYBSP_USER_LED_config;
 #define CYBSP_USER_LED1_config CYBSP_USER_LED_config

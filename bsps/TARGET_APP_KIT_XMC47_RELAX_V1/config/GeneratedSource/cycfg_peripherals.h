@@ -30,6 +30,7 @@
 #define CYCFG_PERIPHERALS_H
 
 #include "cycfg_notices.h"
+#include "xmc_ccu4.h"
 #include "xmc_eru.h"
 #include "cycfg_routing.h"
 #include "xmc_uart.h"
@@ -38,6 +39,25 @@
 extern "C" {
 #endif
 
+#define ccu4_2_ENABLED 1U
+#define ccu4_2_NUM 2U
+#define ccu4_2_HW CCU42
+#define PWM1_ENABLED 1U
+#define PWM1_NUM 0U
+#define PWM1_HW CCU42_CC40
+#define PWM1_TICK_NS 222U
+#define PWM2_ENABLED 1U
+#define PWM2_NUM 1U
+#define PWM2_HW CCU42_CC41
+#define PWM2_TICK_NS 222U
+#define PWM3_ENABLED 1U
+#define PWM3_NUM 2U
+#define PWM3_HW CCU42_CC42
+#define PWM3_TICK_NS 222U
+#define PWM4_ENABLED 1U
+#define PWM4_NUM 3U
+#define PWM4_HW CCU42_CC43
+#define PWM4_TICK_NS 222U
 #define eru_1_ers_3_ENABLED 1U
 #define XMC_ERU1_ETL3 XMC_ERU_ETL_SOURCE_A
 #define eru_1_etl_3_ENABLED 1U
@@ -61,6 +81,22 @@ extern "C" {
 #define SBUS_UART_RECEIVE_EVENT_HANDLER USIC1_0_IRQHandler
 #define SBUS_UART_RECEIVE_EVENT_IRQN USIC1_0_IRQn
 
+extern const XMC_CCU4_SLICE_COMPARE_CONFIG_t PWM1_compare_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM1_event0_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM1_event1_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM1_event2_config;
+extern const XMC_CCU4_SLICE_COMPARE_CONFIG_t PWM2_compare_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM2_event0_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM2_event1_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM2_event2_config;
+extern const XMC_CCU4_SLICE_COMPARE_CONFIG_t PWM3_compare_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM3_event0_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM3_event1_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM3_event2_config;
+extern const XMC_CCU4_SLICE_COMPARE_CONFIG_t PWM4_compare_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM4_event0_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM4_event1_config;
+extern const XMC_CCU4_SLICE_EVENT_CONFIG_t PWM4_event2_config;
 extern const XMC_ERU_ETL_CONFIG_t eru_1_etl_3_config;
 extern const XMC_ERU_OGU_CONFIG_t eru_1_ogu_3_config;
 extern const XMC_UART_CH_CONFIG_t CYBSP_DEBUG_UART_config;

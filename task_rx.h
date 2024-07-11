@@ -2,6 +2,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
 #include "cybsp.h"
 #include <stdio.h>
 
@@ -18,6 +19,9 @@
 #define SBUS_HEADER            0x0f
 #define SBUS_FOOTER            0x00
 #define SBUS_FOOTER2           0x04
+
+#define RX_SBUS_EDGE_MODE_ISR  eru_1_ogu_3_INTERRUPT_HANDLER
+#define RX_SBUS_DMA_MODE_ISR   GPDMA0_INTERRUPT_HANDLER
 
 typedef struct sbus_data
 {
@@ -37,5 +41,3 @@ typedef enum
     STATE_WAITING_FOR_FIRST_EDGE,
     STATE_WATCHING_EDGES
 } state_t;
-
-void rx_change_state(state_t nstate);

@@ -27,7 +27,8 @@
         "files.associations": {
             "task.h": "c",
             "freertos.h": "c",
-            "task_rx_api.h": "c"
+            "task_rx_api.h": "c",
+            "cycfg_dmas.h": "c"
         }
     },
     "extensions": {

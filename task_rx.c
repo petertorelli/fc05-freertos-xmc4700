@@ -28,38 +28,51 @@
 static uint8_t g_sbus_raw_a[25];
 static uint8_t g_sbus_raw_b[25];
 
-// For the RX pin's interrupt ISR:
+// For edge-detect mode ISR:
 static volatile TickType_t g_last_tick = 0;
 
-// For the DMA ISR:
-static volatile uint8_t *g_sbus_ready_raw_ptr  = g_sbus_raw_b;
-static volatile bool     g_sbus_read_raw_fence = false;
+// For the DMA-mode ISR:
+static volatile uint8_t *g_sbus_ready_raw_ptr = g_sbus_raw_b;
 
 // Used in generated code's DMA reload function
 volatile void *g_sbus_raw_dst_ptr = (void *)&(g_sbus_raw_a[0]);
 volatile void *g_sbus_src_ptr     = (void *)&(SBUS_UART_HW->RBUF);
 
 static sbus_data_t g_sbus_data;
+volatile state_t   g_state = STATE_STARTUP;
 
-volatile state_t g_state = STATE_STARTUP;
+SemaphoreHandle_t sem_rx_packet_rdy = NULL;
 
-/* The ISR when we are in edge-counting mode. */
+/**
+ * @brief Change the state, and preserve the last state for debugging.
+ *
+ * Note: this may be called from within an interrupt; so don't overload it.
+ *
+ * @param nstate - The new state to change to
+ */
+static void
+rx_change_state(state_t nstate)
+{
+    static state_t last_state = STATE_NONE;
+    last_state                = g_state;
+    g_state                   = nstate;
+}
+
 void
-SBUS_SYNC_HANDLER(void)
+RX_SBUS_EDGE_MODE_ISR(void)
 {
     g_last_tick = xTaskGetTickCount();
     g_state     = STATE_WATCHING_EDGES;
 }
 
-/* The ISR when we are in sync'd DMA mode. */
 /* This should fire every 10ms = FrSky XM+ Rx. */
 void
-GPDMA0_INTERRUPT_HANDLER(void)
+RX_SBUS_DMA_MODE_ISR(void)
 {
     XMC_DMA_CH_ClearEventStatus(
         SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM, SBUS_DMA_HDLR_events);
     /* Don't swap buffers is a task is reading the other one */
-    if (!g_sbus_read_raw_fence)
+    if (xSemaphoreTakeFromISR(sem_rx_packet_rdy, NULL))
     {
         if (g_sbus_raw_dst_ptr == (void *)&(g_sbus_raw_a[0]))
         {
@@ -71,7 +84,9 @@ GPDMA0_INTERRUPT_HANDLER(void)
             g_sbus_ready_raw_ptr = g_sbus_raw_b;
             g_sbus_raw_dst_ptr   = (void *)&(g_sbus_raw_a[0]);
         }
+        xSemaphoreGiveFromISR(sem_rx_packet_rdy, NULL);
     }
+    /* Is it bad style to be changing state in the ISR? */
     switch (g_state)
     {
         case STATE_WAITING_FOR_DMA_HALT:
@@ -95,7 +110,7 @@ GPDMA0_INTERRUPT_HANDLER(void)
 /* The point of this is to stop the UART and then reroute the DX input to pin
  * P0[5], but the configuratore won't let us do this b/c we also use for the ERU
  * sync interrupt. Ready... Set... but don't Go! */
-void
+static void
 rx_uart_ready_set(void)
 {
     /* Invert polarity, FrSky receiver requirement */
@@ -169,26 +184,28 @@ rx_read_and_decode(void)
 {
     bool       err = false;
     TickType_t t   = xTaskGetTickCount();
-    /* Prevent DMA interrupt from corrupting the current buffer */
-    g_sbus_read_raw_fence = true;
-    err                   = decode_sbus(g_sbus_ready_raw_ptr, &g_sbus_data);
-    g_sbus_read_raw_fence = false;
-    if (err)
+    if (xSemaphoreTake(sem_rx_packet_rdy, 0))
     {
-        /* Force a resync */
-        rx_change_state(STATE_WAITING_FOR_DMA_HALT);
-    }
-    else
-    {
-        printf("%lu %5lu %5lu %5lu %5lu\n",
-               t,
-               g_sbus_data.ch[0],
-               g_sbus_data.ch[1],
-               g_sbus_data.ch[2],
-               g_sbus_data.ch[3]);
+        err = decode_sbus(g_sbus_ready_raw_ptr, &g_sbus_data);
+        xSemaphoreGive(sem_rx_packet_rdy);
+        if (err)
+        {
+            /* Force a resync */
+            rx_change_state(STATE_WAITING_FOR_DMA_HALT);
+        }
+        else
+        {
+            printf("%10lu %5lu %5lu %5lu %5lu\n",
+                   t,
+                   g_sbus_data.ch[0],
+                   g_sbus_data.ch[1],
+                   g_sbus_data.ch[2],
+                   g_sbus_data.ch[3]);
+        }
     }
 }
 
+/* This function assumes we've entered the SBUS idle window. */
 static void
 rx_switch_to_dma_mode(void)
 {
@@ -199,27 +216,13 @@ rx_switch_to_dma_mode(void)
     XMC_DMA_CH_Enable(SBUS_DMA_HDLR_HW, SBUS_DMA_HDLR_NUM);
 }
 
+/* This function assumes we've already stopped the DMA engine. */
 static void
 rx_switch_to_edge_detect_mode(void)
 {
     rx_uart_ready_set();
     rx_change_state(STATE_WAITING_FOR_FIRST_EDGE);
     NVIC_EnableIRQ(SBUS_SYNC_IRQN);
-}
-
-/**
- * @brief Change the state, and preserve the last state for debugging.
- *
- * Note: this may be called from within an interrupt; so don't overload it.
- *
- * @param nstate - The new state to change to
- */
-void
-rx_change_state(state_t nstate)
-{
-    static state_t last_state = STATE_NONE;
-    last_state                = g_state;
-    g_state                   = nstate;
 }
 
 void
@@ -281,8 +284,18 @@ rx_setup(void)
     {
         CY_ASSERT(0);
     }
-// TODO: Do we need this?
+
+    // TODO: Can't recall why this is needed HERE, but it is needed.
     rx_uart_ready_set();
+
+    sem_rx_packet_rdy = xSemaphoreCreateMutex();
+    if (!sem_rx_packet_rdy)
+    {
+        /* TODO: ERROR HANDLER */
+        while (1)
+        {
+        }
+    }
 
     /* Setup the DMA interrupt, but don't start it until we sync */
     NVIC_SetPriority(GPDMA0_IRQN,

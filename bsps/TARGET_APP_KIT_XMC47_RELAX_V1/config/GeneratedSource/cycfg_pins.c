@@ -58,6 +58,26 @@ const XMC_GPIO_CONFIG_t ioss_0_port_2_pin_14_config =
     .mode = (XMC_GPIO_MODE_t)ioss_0_port_2_pin_14_MODE,
     .output_level = XMC_GPIO_OUTPUT_LEVEL_LOW,
 };
+const XMC_GPIO_CONFIG_t ioss_0_port_3_pin_0_config = 
+{
+    .mode = (XMC_GPIO_MODE_t)ioss_0_port_3_pin_0_MODE,
+    .output_level = XMC_GPIO_OUTPUT_LEVEL_LOW,
+};
+const XMC_GPIO_CONFIG_t ioss_0_port_3_pin_12_config = 
+{
+    .mode = (XMC_GPIO_MODE_t)ioss_0_port_3_pin_12_MODE,
+    .output_level = XMC_GPIO_OUTPUT_LEVEL_LOW,
+};
+const XMC_GPIO_CONFIG_t ioss_0_port_3_pin_13_config = 
+{
+    .mode = (XMC_GPIO_MODE_t)ioss_0_port_3_pin_13_MODE,
+    .output_level = XMC_GPIO_OUTPUT_LEVEL_LOW,
+};
+const XMC_GPIO_CONFIG_t ioss_0_port_3_pin_3_config = 
+{
+    .mode = (XMC_GPIO_MODE_t)ioss_0_port_3_pin_3_MODE,
+    .output_level = XMC_GPIO_OUTPUT_LEVEL_LOW,
+};
 const XMC_GPIO_CONFIG_t CYBSP_USER_LED2_config = 
 {
     .mode = (XMC_GPIO_MODE_t)CYBSP_USER_LED2_MODE,
@@ -86,6 +106,14 @@ void init_cycfg_pins(void)
     XMC_GPIO_SetHardwareControl(CYBSP_DEBUG_UART_TX_PORT, CYBSP_DEBUG_UART_TX_PIN, CYBSP_DEBUG_UART_TX_HWO);
     XMC_GPIO_Init(ioss_0_port_2_pin_14_PORT, ioss_0_port_2_pin_14_PIN, &ioss_0_port_2_pin_14_config);
     XMC_GPIO_SetHardwareControl(ioss_0_port_2_pin_14_PORT, ioss_0_port_2_pin_14_PIN, ioss_0_port_2_pin_14_HWO);
+    XMC_GPIO_Init(ioss_0_port_3_pin_0_PORT, ioss_0_port_3_pin_0_PIN, &ioss_0_port_3_pin_0_config);
+    XMC_GPIO_SetHardwareControl(ioss_0_port_3_pin_0_PORT, ioss_0_port_3_pin_0_PIN, ioss_0_port_3_pin_0_HWO);
+    XMC_GPIO_Init(ioss_0_port_3_pin_12_PORT, ioss_0_port_3_pin_12_PIN, &ioss_0_port_3_pin_12_config);
+    XMC_GPIO_SetHardwareControl(ioss_0_port_3_pin_12_PORT, ioss_0_port_3_pin_12_PIN, ioss_0_port_3_pin_12_HWO);
+    XMC_GPIO_Init(ioss_0_port_3_pin_13_PORT, ioss_0_port_3_pin_13_PIN, &ioss_0_port_3_pin_13_config);
+    XMC_GPIO_SetHardwareControl(ioss_0_port_3_pin_13_PORT, ioss_0_port_3_pin_13_PIN, ioss_0_port_3_pin_13_HWO);
+    XMC_GPIO_Init(ioss_0_port_3_pin_3_PORT, ioss_0_port_3_pin_3_PIN, &ioss_0_port_3_pin_3_config);
+    XMC_GPIO_SetHardwareControl(ioss_0_port_3_pin_3_PORT, ioss_0_port_3_pin_3_PIN, ioss_0_port_3_pin_3_HWO);
     XMC_GPIO_Init(CYBSP_USER_LED2_PORT, CYBSP_USER_LED2_PIN, &CYBSP_USER_LED2_config);
     XMC_GPIO_SetHardwareControl(CYBSP_USER_LED2_PORT, CYBSP_USER_LED2_PIN, CYBSP_USER_LED2_HWO);
     XMC_GPIO_Init(CYBSP_USER_LED_PORT, CYBSP_USER_LED_PIN, &CYBSP_USER_LED_config);

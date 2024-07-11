@@ -42,6 +42,10 @@ static inline void init_cycfg_routing(void) {}
 #define ioss_0_port_1_pin_4_INPUT XMC_GPIO_MODE_INPUT_TRISTATE
 #define ioss_0_port_1_pin_5_ALT XMC_GPIO_MODE_OUTPUT_ALT2
 #define ioss_0_port_2_pin_14_ALT XMC_GPIO_MODE_OUTPUT_ALT2
+#define ioss_0_port_3_pin_0_ALT XMC_GPIO_MODE_OUTPUT_ALT3
+#define ioss_0_port_3_pin_3_ALT XMC_GPIO_MODE_OUTPUT_ALT3
+#define ioss_0_port_3_pin_12_ALT XMC_GPIO_MODE_OUTPUT_ALT3
+#define ioss_0_port_3_pin_13_ALT XMC_GPIO_MODE_OUTPUT_ALT3
 
 #define SBUS_DMA_HDLR_src_per_0_TRIGGER_OUT 5
 #define SBUS_UART_sr0_0_TRIGGER_IN 11

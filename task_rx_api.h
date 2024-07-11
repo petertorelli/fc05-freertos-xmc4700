@@ -1,4 +1,5 @@
 #pragma once
+#include "semphr.h"
 
 #define SBUS_MAX 1811u
 #define SBUS_MIN 172u
@@ -7,3 +8,5 @@
 void     rx_task(void *);
 void     rx_setup(void);
 uint32_t rx_get_sbus_steering(void);
+
+extern SemaphoreHandle_t sem_rx_packet_rdy;

@@ -1,18 +1,29 @@
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
 #include "cybsp.h"
 #include <stdio.h>
 
 #include "task_rx_api.h"
 
-#define SERVO2_TRIM -10
-// 120 MHz, prescalar is 100, period is 24000
-// 50 Hz frequency, or 20 ms period
+/**
+ * I'm using servos from GoBilda, the high-torque version. They spec
+ * min PWM window of 0.5msec and a max of 2.5ms. Clock is 144 MHz on
+ * the XMC4700, and I'm using the 16-bit CCU4 with a prescalar of 32
+ * to get nice integral duty cycles. (4% to 20%). With this setup the
+ * (PERIOD=56250) it runs at 80 Hz. 45000 = 0.5ms, 54000 = 2.5ms.
+ */
+#define SERVO_PWM_MIN 45000
+#define SERVO_PWM_MAX 54000
+#define SERVO_PWM_MID ((SERVO_PWM_MAX + SERVO_PWM_MIN) >> 1)
 
-#define SERVO_PWM_MIN 1
-#define SERVO_PWM_MAX 24000
-#define SERVO_PWM_MID (SERVO_PWM_MAX >> 1)
+// +/-DEAD ZONE nothing happens (+/-2%, 4% wide)
+#define SERVO_DZ       990U
+#define SERVO_DZ_LO    (SERVO_PWM_MID - SERVO_DZ)
+#define SERVO_DZ_HI    (SERVO_PWM_MID + SERVO_DZ)
+#define SERVO_IN_DZ(x) ((x > SERVO_DZ_LO) && (x < SERVO_DZ_HI))
 
+#if 0
 // 1.0 ms
 // #define SERVO_MIN 540
 #define SERVO_MIN 1600
@@ -23,57 +34,62 @@
 // 2.0 ms
 // #define SERVO_MAX 3060
 #define SERVO_MAX 2000
-
-// +/-DEAD ZONE nothing happens (+/-2%, 4% wide)
-#define SERVO_DZ       36u
-#define SERVO_DZ_LO    (SERVO_MID - SERVO_DZ)
-#define SERVO_DZ_HI    (SERVO_MID + SERVO_DZ)
-#define SERVO_IN_DZ(x) ((x > SERVO_DZ_LO) && (x < SERVO_DZ_HI))
+#endif
 
 // Transmitter jitter makes servos twitchy when idle
-#define SERVO_JITTER_FILTER ~0x1f
+#define SERVO_SBUS_JITTER_FILTER ~0x1f
 
-uint32_t g_angles[4];
+extern SemaphoreHandle_t sem_rx_packet_rdy;
 
 void
 task_servo(void)
 {
-    uint32_t v = SERVO_MID;
+    uint32_t v = SERVO_PWM_MID;
     uint32_t front;
     uint32_t rear;
-    while (1)
+    uint32_t delay = 100;
+
+    for (;;)
     {
-        vTaskDelay(100);
-        v = rx_get_sbus_steering();
-        v = map32u(v, SBUS_MIN, SBUS_MAX, SERVO_MIN, SERVO_MAX);
-
-        v &= SERVO_JITTER_FILTER;
-
-// why do we need a dead zone if we're filtering the signal?
-        if (SERVO_IN_DZ(v))
+        delay = 100;
+        if (xSemaphoreTake(sem_rx_packet_rdy, 10))
         {
-            rear  = SERVO_MID;
-            front = SERVO_MID;
-        }
-        else
-        {
-            front = v;
-            /// ummm... these are the same thing....
-            if (v > SERVO_MID)
+            v = rx_get_sbus_steering();
+            xSemaphoreGive(sem_rx_packet_rdy);
+            delay = 90;
+            /* Shave off the last 5 bits, really? Why so big TODO */
+            v &= SERVO_SBUS_JITTER_FILTER;
+            v = map32u(v, SBUS_MIN, SBUS_MAX, SERVO_PWM_MIN, SERVO_PWM_MAX);
+
+            // why do we need a dead zone if we're filtering the signal? TODO NO
+            if (SERVO_IN_DZ(v))
             {
-                rear = (SERVO_MID - v) + SERVO_MID;
+                rear  = SERVO_PWM_MID;
+                front = SERVO_PWM_MID;
             }
             else
             {
-                rear = SERVO_MID - (v - SERVO_MID);
+                front = v;
+                /// ummm... these are the same thing....
+                if (v > SERVO_PWM_MID)
+                {
+                    rear = (SERVO_PWM_MID - v) + SERVO_PWM_MID;
+                }
+                else
+                {
+                    rear = SERVO_PWM_MID - (v - SERVO_PWM_MID);
+                }
             }
-        }
 
-        /*
-        TIM_SERVO->CCR1 = rear;
-        TIM_SERVO->CCR2 = rear;
-        TIM_SERVO->CCR3 = front;
-        TIM_SERVO->CCR4 = front;
-        */
+            /**
+             * TODO: Scale these to inner & outer radii.
+             */
+
+            XMC_CCU4_SLICE_SetTimerCompareMatch(PWM1_HW, rear);
+            XMC_CCU4_SLICE_SetTimerCompareMatch(PWM2_HW, rear);
+            XMC_CCU4_SLICE_SetTimerCompareMatch(PWM3_HW, front);
+            XMC_CCU4_SLICE_SetTimerCompareMatch(PWM4_HW, front);
+        }
+        vTaskDelay(delay);
     }
 }
